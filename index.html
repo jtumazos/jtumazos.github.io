@@ -1,0 +1,1635 @@
+
+<head>
+    <meta property="og:title" content="ChallengeSpark Ver3.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viral Ver2.4</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #1a1a3d, #2e2e5e);
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        p.tagline {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #D3D3D3;
+        }
+
+        .button-container {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .button-container button {
+            font-size: 1rem;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            min-width: 120px;
+        }
+
+        .button-container .reset-btn {
+            background: #60A5FA;
+        }
+
+        .button-container .show-favorites-btn {
+            background: linear-gradient(to right, #FFD700, #FF69B4);
+        }
+
+        .button-container .clear-favorites-btn {
+            background: #8B5CF6;
+        }
+
+        .category-bar {
+            margin-bottom: 20px;
+            width: 100%;
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            scrollbar-width: thin;
+            scrollbar-color: #FF69B4 rgba(255, 215, 0, 0.1);
+        }
+
+        .category-bar::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .category-bar::-webkit-scrollbar-track {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .category-bar::-webkit-scrollbar-thumb {
+            background: linear-gradient(to right, #FFD700, #FF69B4);
+            border-radius: 4px;
+        }
+
+        .category-btn {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            font-size: 1rem;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            background: linear-gradient(to right, rgba(96, 165, 250, 0.7), rgba(139, 92, 246, 0.7));
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s, background 0.3s;
+            white-space: nowrap;
+        }
+
+        .category-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+            background: linear-gradient(to right, #FFD700, #FF69B4);
+        }
+
+        .category-btn.active {
+            background: linear-gradient(to right, #FFD700, #FF69B4);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .generate-btn {
+            font-size: 1.5rem;
+            padding: 15px 30px;
+            background: linear-gradient(to right, #FF69B4, #8B5CF6, #60A5FA);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin: 30px auto;
+            display: block;
+        }
+
+        .generate-btn:hover {
+            transform: scale(1.05);
+        }
+
+        #spinner {
+            display: none;
+            font-size: 2rem;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .challenge-card {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            animation: slideUp 0.5s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .challenge-card h2 {
+            font-size: 1.8rem;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .challenge-card p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .challenge-card .hashtags {
+            color: #60A5FA;
+            margin-top: 10px;
+        }
+
+        .challenge-card .time {
+            color: #FF69B4;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .share-btn, .favorite-btn {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(to right, #FFD700, #FF69B4);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:disabled, .favorite-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .ebook-ad-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .ebook-ad-card img {
+            width: 150px;
+            height: 200px;
+            float: left;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+
+        .ebook-ad-card h3 {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .ebook-ad-card .price {
+            font-size: 1.2rem;
+            color: #60A5FA;
+            margin-bottom: 10px;
+        }
+
+        .ebook-ad-card .details {
+            font-size: 0.9rem;
+            color: #D3D3D3;
+            margin-bottom: 10px;
+        }
+
+        .ebook-ad-card .description {
+            font-size: 1rem;
+            max-height: 100px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #FF69B4 #1a1a3d;
+        }
+        
+        .ebook-ad-card form {
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .download-btn, .preview-btn {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .download-btn {
+            background: linear-gradient(to right, #FFD700, #60A5FA);
+        }
+
+        .preview-btn {
+            background: linear-gradient(to right, #60A5FA, #8B5CF6);
+        }
+
+        .counter {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            position: relative;
+            width: 600px;
+            max-width: 90%;
+        }
+
+        .streak-counter {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            position: relative;
+            width: 600px;
+            max-width: 90%;
+            color: #FFD700;
+            background: linear-gradient(to right, #FF69B4, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-footer {
+            position: relative;
+            margin-top: 40px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .social-icons {
+            margin-bottom: 10px;
+        }
+
+        .social-icons a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .footer-links {
+            margin-top: 10px;
+        }
+
+        .footer-links a {
+            color: #D3D3D3;
+            font-size: 1rem;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #FFD700;
+        }
+
+        #soundToggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #favoritesSection {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #favoritesSection h3 {
+            font-size: 1.2rem;
+            color: #FFD700;
+        }
+
+        #favoritesList {
+            list-style: none;
+            padding: 0;
+            color: #D3D3D3;
+        }
+
+        #favoritesList li {
+            margin: 5px 0;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                justify-content: flex-start;
+                padding-bottom: 180px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .button-container button {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                min-width: 100px;
+            }
+
+            .category-bar {
+                padding: 8px;
+                gap: 8px;
+            }
+
+            .category-btn {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+
+            .generate-btn {
+                font-size: 1.2rem;
+                padding: 10px 20px;
+                margin: 25px auto;
+            }
+
+            .challenge-card h2 {
+                font-size: 1.5rem;
+            }
+
+            .ebook-ad-card {
+                text-align: center;
+                padding: 15px;
+            }
+
+            .ebook-ad-card img {
+                width: 100px;
+                height: 133px;
+                float: none;
+                margin: 0 auto 10px;
+                display: block;
+            }
+
+            .ebook-ad-card h3 {
+                font-size: 1.3rem;
+                margin: 0 0 10px 0;
+                line-height: 1.2;
+            }
+
+            .ebook-ad-card .price {
+                font-size: 1rem;
+            }
+
+            .ebook-ad-card .details {
+                font-size: 0.8rem;
+            }
+
+            .ebook-ad-card .description {
+                max-height: 80px;
+                font-size: 0.9rem;
+            }
+
+            .ebook-ad-card .download-btn, 
+            .ebook-ad-card .preview-btn {
+                display: block;
+                margin: 5px auto;
+                width: 80%;
+                box-sizing: border-box;
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+            .ebook-ad-card .download-btn {
+               min-width: 120px;
+               white-space: nowrap;
+            }
+            
+            .social-footer {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 15px;
+                border-radius: 5px;
+                margin-top: 30px;
+                width: 90%;
+                max-width: 600px;
+                box-sizing: border-box;
+            }
+
+            .social-icons {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .social-icons a {
+                margin: 0 10px;
+                font-size: 1.3rem;
+            }
+
+            .footer-links {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-links a {
+                margin: 8px 0;
+                font-size: 0.9rem;
+            }
+
+            .counter, .streak-counter {
+                width: 100%;
+                font-size: 1rem;
+            }
+        }
+        .ebook-ad-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Viral Ver2.4</h1>
+        <p class="tagline">Ignite Your Creativity with Fun Challenges!</p>
+        <div class="button-container">
+            <button class="reset-btn" onclick="resetDailyLimit()">Reset Daily Limit</button>
+            <button class="show-favorites-btn" onclick="showFavorites()">Show Favorites</button>
+            <button class="clear-favorites-btn" onclick="clearFavorites()">Clear Favorites</button>
+        </div>
+        <div class="category-bar">
+            <button class="category-btn active" data-type="All" onclick="filterChallenges('All')">All</button>
+            <button class="category-btn" data-type="Dance" onclick="filterChallenges('Dance')">Dance</button>
+            <button class="category-btn" data-type="Fitness" onclick="filterChallenges('Fitness')">Fitness</button>
+            <button class="category-btn" data-type="Creative" onclick="filterChallenges('Creative')">Creative</button>
+            <button class="category-btn" data-type="Social" onclick="filterChallenges('Social')">Social</button>
+            <button class="category-btn" data-type="Mindfulness" onclick="filterChallenges('Mindfulness')">Mindfulness</button>
+            <button class="category-btn" data-type="Adventure" onclick="filterChallenges('Adventure')">Adventure</button>
+        </div>
+        <button class="generate-btn" onclick="generateChallenge()">Generate Challenge</button>
+        <div id="spinner"><i class="fas fa-spinner"></i></div>
+        <div id="challengeCard" class="challenge-card">
+            <h2 id="challengeName"></h2>
+            <p id="challengeDesc"></p>
+            <p id="challengeHashtags" class="hashtags"></p>
+            <p id="challengeTime" class="time"></p>
+            <button class="share-btn" onclick="shareChallenge()">Share</button>
+            <button class="favorite-btn" onclick="addToFavorites()">Add to Favorites</button>
+        </div>
+        <div class="ebook-ad-card">
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4XJBWPMWFBL62" target="_blank">
+                <img src="https://file-hosting.dashnexpages.net/useraccept/.editor/1743944158-7118.jpeg" alt="eBook Cover">
+                <h3>eBook Ad</h3>
+                <p class="price">$5.00</p>
+                <p class="details">PDF Download • 50 Pages • Instant Access</p>
+                <p class="description">Unlock a world of creativity with this exclusive eBook packed with fun challenges and ideas!</p>
+            </a>
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="hosted_button_id" value="4XJBWPMWFBL62">
+                <input type="submit" value="Buy Now" class="download-btn">
+            </form>
+            <button class="preview-btn" onclick="alert('Preview coming soon!')">Preview</button>
+        </div>
+        <div class="counter" id="challengeCounter">Challenges Left Today: 5</div>
+        <div class="streak-counter" id="streakCounter">Challenge Streak: 0 Days</div>
+        <div class="social-footer">
+            <div class="social-icons">
+                <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <button id="soundToggle" onclick="toggleSound()"><i class="fas fa-volume-up"></i></button>
+        <div id="favoritesSection">
+            <h3>Favorites</h3>
+            <ul id="favoritesList"></ul>
+        </div>
+    </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
+        const generateBtn = document.querySelector('.generate-btn');
+        const spinner = document.getElementById('spinner');
+        const challengeCard = document.getElementById('challengeCard');
+        const challengeName = document.getElementById('challengeName');
+        const challengeDesc = document.getElementById('challengeDesc');
+        const challengeHashtags = document.getElementById('challengeHashtags');
+        const challengeTime = document.getElementById('challengeTime');
+        const challengeCounter = document.getElementById('challengeCounter');
+        const streakCounter = document.getElementById('streakCounter');
+        let isSoundOn = true;
+        let challenges = [
+
+ // Dance Challenges (20)
+        {
+            name: "Mirror Dance Challenge",
+            description: "Stand in front of a mirror and create a 1-minute dance routine where every move is symmetrical, as if your reflection is dancing with you. Pick an upbeat song and focus on smooth, mirrored movements like arm waves or side steps.",
+            hashtags: ["#MirrorDance", "#DanceChallenge"],
+            time: "20 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Slow-Mo Dance",
+            description: "Choreograph a 30-second dance routine performed entirely in slow motion to a fast-paced song. Emphasize exaggerated, fluid motions to contrast the beat, and record it for a fun effect.",
+            hashtags: ["#SlowMoDance", "#DanceFun"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Color-Themed Dance",
+            description: "Choose a color (e.g., blue) and create a 1-minute dance inspired by it. Wear something in that color and let the mood (calm for blue, fiery for red) guide your moves to any song you like.",
+            hashtags: ["#ColorDance", "#DanceChallenge"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Chair Dance Routine",
+            description: "Use a chair as your prop to create a 1-minute seated dance routine. Incorporate leg kicks, arm flourishes, and spins around the chair to a catchy tune, keeping it playful and creative.",
+            hashtags: ["#ChairDance", "#DanceCreative"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Retro Dance Revival",
+            description: "Pick a classic dance move from the 80s (like the Moonwalk or Running Man) and build a 1-minute routine around it. Use a retro song to set the vibe and have fun with the nostalgia.",
+            hashtags: ["#RetroDance", "#DanceChallenge"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Emotion Dance",
+            description: "Choose an emotion (happy, sad, angry) and create a 1-minute dance to express it. Use a song that matches the mood and let your body language tell the story through movement.",
+            hashtags: ["#EmotionDance", "#DanceExpression"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Freeze Frame Dance",
+            description: "Choreograph a 1-minute dance where you freeze in a dramatic pose every 10 seconds. Pick a song with a strong beat to time your freezes, making it dynamic and fun.",
+            hashtags: ["#FreezeDance", "#DanceChallenge"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Partner Shadow Dance",
+            description: "With a friend, create a 1-minute dance where one leads and the other mirrors every move like a shadow. Use a lively song and keep it synchronized for a cool visual effect.",
+            hashtags: ["#ShadowDance", "#DanceWithFriends"],
+            time: "35 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Animal-Inspired Dance",
+            description: "Pick an animal (e.g., cat, bird, snake) and create a 1-minute dance mimicking its movements. Choose a song that fits the vibe and get creative with how you embody the creature.",
+            hashtags: ["#AnimalDance", "#DanceChallenge"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "One-Spot Dance",
+            description: "Stay in one spot (no traveling steps) and create a 1-minute dance using only arm, torso, and head movements. Pick an energetic song and make it visually interesting without moving your feet.",
+            hashtags: ["#OneSpotDance", "#DanceCreative"],
+            time: "20 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Storytelling Dance",
+            description: "Create a 1-minute dance that tells a simple story (e.g., waking up, going on an adventure). Use a song with lyrics or a clear mood to guide your narrative through movement.",
+            hashtags: ["#StoryDance", "#DanceChallenge"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Hand Dance Challenge",
+            description: "Choreograph a 30-second dance using only your hands and fingers. Set it to a funky beat and focus on intricate gestures, like waves or snaps, to make it mesmerizing.",
+            hashtags: ["#HandDance", "#DanceFun"],
+            time: "20 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Weather Dance",
+            description: "Pick a weather type (rain, sun, wind) and create a 1-minute dance inspired by it. Use a song that matches the mood and mimic the elements with flowing or sharp moves.",
+            hashtags: ["#WeatherDance", "#DanceChallenge"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Silent Disco",
+            description: "Put on headphones, pick a song, and dance for 1 minute in silence (no speakers). Focus on feeling the rhythm internally and let loose with your wildest moves.",
+            hashtags: ["#SilentDisco", "#DanceVibes"],
+            time: "20 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Reverse Dance",
+            description: "Learn a short 30-second dance routine, then perform it backward to a reversed version of the song (or just imagine it). It’s a brain teaser and a fun twist on choreography!",
+            hashtags: ["#ReverseDance", "#DanceChallenge"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Glow Dance",
+            description: "In a dim room, use glow sticks or a flashlight to create a 1-minute dance where the light guides your moves. Pick a dreamy song and make it a glowing spectacle.",
+            hashtags: ["#GlowDance", "#DanceCreative"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Alphabet Dance",
+            description: "Create a 1-minute dance where each move spells out a letter of a short word (e.g., 'JOY') with your body. Use a cheerful song and make the shapes clear and fun.",
+            hashtags: ["#AlphabetDance", "#DanceChallenge"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Cultural Fusion Dance",
+            description: "Blend two dance styles from different cultures (e.g., salsa and hip-hop) into a 1-minute routine. Pick a song that bridges the styles and celebrate the fusion.",
+            hashtags: ["#FusionDance", "#DanceWorld"],
+            time: "35 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Prop Dance",
+            description: "Grab a safe household item (like a scarf or hat) and create a 1-minute dance incorporating it as a prop. Use a lively song and let the item enhance your moves.",
+            hashtags: ["#PropDance", "#DanceChallenge"],
+            time: "25 minutes",
+            type: "Dance"
+        },
+        {
+            name: "Echo Dance",
+            description: "Create a 1-minute dance with a friend where one starts a move, and the other echoes it with a twist. Use a song with a strong rhythm to keep the flow going.",
+            hashtags: ["#EchoDance", "#DanceWithFriends"],
+            time: "30 minutes",
+            type: "Dance"
+        },
+
+        // Fitness Challenges (20)
+        {
+            name: "Step-Up Challenge",
+            description: "Find a sturdy step or low stool and do 100 step-ups (50 per leg) at a steady pace. Keep your posture straight and use a timer to track your progress for a great leg workout.",
+            hashtags: ["#StepUpChallenge", "#Fitness"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Wall Push-Up Marathon",
+            description: "Perform 75 wall push-ups in sets of 15 with short breaks. Stand about arm’s length from a wall, lean in, and push back—perfect for building upper body strength safely.",
+            hashtags: ["#WallPushUp", "#FitnessChallenge"],
+            time: "20 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Chair Squat Circuit",
+            description: "Do 3 sets of 20 chair squats: stand in front of a chair, lower until you almost sit, then rise. Rest 30 seconds between sets for a solid lower-body burn.",
+            hashtags: ["#ChairSquat", "#Fitness"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Arm Circle Endurance",
+            description: "Extend your arms out to the sides and do small circles for 5 minutes straight (switch directions halfway). It’s a simple way to tone your shoulders and build stamina.",
+            hashtags: ["#ArmCircles", "#FitnessChallenge"],
+            time: "10 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Balance Beam Walk",
+            description: "Lay a long piece of tape or a rope on the floor and walk heel-to-toe across it 20 times. Focus on balance and core engagement for a fun, low-impact challenge.",
+            hashtags: ["#BalanceChallenge", "#Fitness"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Knee Lift Cardio",
+            description: "March in place, lifting your knees high, for 10 minutes without stopping. Add arm pumps to boost the cardio effect and keep a steady rhythm.",
+            hashtags: ["#KneeLift", "#FitnessCardio"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Towel Twist Core",
+            description: "Sit on the floor, hold a towel taut with both hands, lean back slightly, and twist side to side for 3 sets of 20 reps. It’s a gentle way to work your abs.",
+            hashtags: ["#TowelTwist", "#FitnessCore"],
+            time: "10 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Stair Step Challenge",
+            description: "If you have stairs, walk up and down 10 times at a brisk pace (or use a single step). Keep it steady and safe for a quick cardio and leg workout.",
+            hashtags: ["#StairChallenge", "#Fitness"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Side Leg Lift Series",
+            description: "Lie on your side and lift your top leg 30 times, then switch sides. Do 3 sets per leg to tone your hips and thighs with controlled, smooth motions.",
+            hashtags: ["#LegLift", "#FitnessChallenge"],
+            time: "20 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Invisible Jump Rope",
+            description: "Pretend to jump rope for 5 minutes straight, hopping lightly on your toes. Keep a consistent pace and swing your arms as if holding a rope for a fun cardio boost.",
+            hashtags: ["#InvisibleRope", "#FitnessFun"],
+            time: "10 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Plank Tap Challenge",
+            description: "Hold a forearm plank and tap your shoulder with one hand, alternating for 2 minutes total. Rest if needed, but aim for steady taps to engage your core and arms.",
+            hashtags: ["#PlankTap", "#Fitness"],
+            time: "10 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Bottle Curl Workout",
+            description: "Grab two water bottles (or light weights) and do 3 sets of 15 bicep curls per arm. Focus on slow, controlled lifts to build arm strength safely.",
+            hashtags: ["#BottleCurl", "#FitnessChallenge"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Lunge Walk Warm-Up",
+            description: "Take 20 slow, deep lunges forward across a room (or in place), keeping your knee above your ankle. Turn around and repeat for a solid leg and glute workout.",
+            hashtags: ["#LungeWalk", "#Fitness"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Seated Leg Extension",
+            description: "Sit on a chair and extend one leg straight out, holding for 5 seconds, then switch. Do 3 sets of 15 per leg to strengthen your quads without standing.",
+            hashtags: ["#LegExtension", "#FitnessChallenge"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Dance Walk Fitness",
+            description: "Walk around your space for 10 minutes, adding small dance moves (like shimmies or twists) every 30 seconds. It’s a light, fun way to get moving.",
+            hashtags: ["#DanceWalk", "#FitnessFun"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Calf Raise Countdown",
+            description: "Stand and rise onto your toes for 50 calf raises, taking short breaks if needed. Focus on slow descents to really feel the stretch and build strength.",
+            hashtags: ["#CalfRaise", "#Fitness"],
+            time: "10 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Chair Dip Test",
+            description: "Using a sturdy chair, do 3 sets of 10 tricep dips (lower your body by bending your elbows, then push back up). Rest 30 seconds between sets for an arm boost.",
+            hashtags: ["#ChairDip", "#FitnessChallenge"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Stretch and Hold",
+            description: "Pick 5 stretches (e.g., hamstring, quad, shoulder) and hold each for 30 seconds. Move slowly between them for a full-body flexibility session.",
+            hashtags: ["#StretchChallenge", "#Fitness"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Side-to-Side Hop",
+            description: "Hop side to side (about a foot each way) for 5 minutes, keeping a light bounce. It’s a simple cardio move that also works your legs and coordination.",
+            hashtags: ["#SideHop", "#FitnessCardio"],
+            time: "10 minutes",
+            type: "Fitness"
+        },
+        {
+            name: "Breath and Move Flow",
+            description: "Combine deep breathing with slow arm raises and leg lifts for 10 minutes. Inhale as you lift, exhale as you lower, for a calming yet active workout.",
+            hashtags: ["#BreathMove", "#FitnessMindful"],
+            time: "15 minutes",
+            type: "Fitness"
+        },
+
+        // Creative Challenges (20)
+        {
+            name: "Doodle Marathon",
+            description: "Set a timer for 30 minutes and fill a page with continuous doodles—no erasing allowed! Let your pen flow freely, creating shapes, patterns, or scenes as inspiration strikes.",
+            hashtags: ["#DoodleChallenge", "#Creative"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Miniature Scene Craft",
+            description: "Use household items (e.g., buttons, paper clips) to build a tiny scene (like a forest or city) in a shoebox. Spend 45 minutes crafting and arranging for a whimsical result.",
+            hashtags: ["#MiniScene", "#CreativeChallenge"],
+            time: "45 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Haiku Writing",
+            description: "Write 5 haikus (5-7-5 syllable poems) inspired by your day. Take 20 minutes to reflect and craft short, vivid poems about what you’ve seen or felt.",
+            hashtags: ["#HaikuChallenge", "#Creative"],
+            time: "20 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Recycled Art Piece",
+            description: "Gather recyclable materials (cardboard, bottle caps) and create a small sculpture or collage in 1 hour. Focus on texture and color to make it pop.",
+            hashtags: ["#RecycledArt", "#Creative"],
+            time: "1 hour",
+            type: "Creative"
+        },
+        {
+            name: "Fantasy Map Drawing",
+            description: "Draw a map of an imaginary world with mountains, rivers, and towns in 45 minutes. Add fun names and details to bring your creation to life.",
+            hashtags: ["#FantasyMap", "#CreativeChallenge"],
+            time: "45 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Colorful Mandala",
+            description: "Create a mandala using pens or markers on a circular piece of paper. Spend 40 minutes designing symmetrical patterns and filling them with vibrant colors.",
+            hashtags: ["#MandalaArt", "#Creative"],
+            time: "40 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Photo Storyboard",
+            description: "Take 5 photos with your phone to tell a short story (e.g., a day in the life of a cup). Arrange them in order and add captions in 45 minutes.",
+            hashtags: ["#PhotoStory", "#CreativeChallenge"],
+            time: "45 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Paper Puppet Show",
+            description: "Make 2 simple paper puppets (cutouts with sticks) and create a 1-minute skit for them. Spend 30 minutes crafting and practicing your mini performance.",
+            hashtags: ["#PuppetShow", "#Creative"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Nature Sketch",
+            description: "Go outside or look out a window and sketch something natural (a tree, flower, or bird) in 30 minutes. Focus on details like texture and shading.",
+            hashtags: ["#NatureSketch", "#CreativeChallenge"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Song Parody",
+            description: "Pick a popular song and rewrite its chorus with funny or personal lyrics in 25 minutes. Sing it out loud to test your new version!",
+            hashtags: ["#SongParody", "#Creative"],
+            time: "25 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Cardboard Castle",
+            description: "Use old boxes or cardboard to build a small castle model in 1 hour. Add towers, a drawbridge, or decorations with whatever you have on hand.",
+            hashtags: ["#CardboardCastle", "#CreativeChallenge"],
+            time: "1 hour",
+            type: "Creative"
+        },
+        {
+            name: "Dream Journal Comic",
+            description: "Turn a recent dream (or make one up) into a 4-panel comic strip in 40 minutes. Use simple drawings and speech bubbles to capture the weirdness.",
+            hashtags: ["#DreamComic", "#Creative"],
+            time: "40 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Texture Rubbing Art",
+            description: "Find 5 textured surfaces (e.g., bark, coins) and make rubbings with crayons on paper. Arrange them into a collage in 30 minutes for a tactile masterpiece.",
+            hashtags: ["#TextureArt", "#CreativeChallenge"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Imaginary Ad Design",
+            description: "Design an ad (digital or on paper) for a made-up product (like a flying shoe) in 45 minutes. Include a slogan, image, and catchy description.",
+            hashtags: ["#AdDesign", "#Creative"],
+            time: "45 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Clay Pinch Pot",
+            description: "Use air-dry clay or playdough to pinch and shape a small pot or bowl in 30 minutes. Add patterns with a toothpick for extra flair.",
+            hashtags: ["#ClayCraft", "#CreativeChallenge"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "One-Color Painting",
+            description: "Pick one color and paint a picture using only its shades (e.g., all blues) in 40 minutes. Explore depth and contrast with just that hue.",
+            hashtags: ["#MonochromeArt", "#Creative"],
+            time: "40 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Story Dice Tale",
+            description: "Roll dice (or pick random numbers 1-6) and assign each a word (e.g., 1=dragon). Write a 200-word story using all 5 words in 30 minutes.",
+            hashtags: ["#StoryDice", "#CreativeChallenge"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Fabric Scrap Collage",
+            description: "Gather old fabric scraps and glue them into a colorful collage on paper or cardboard in 45 minutes. Layer and overlap for a textured effect.",
+            hashtags: ["#FabricArt", "#Creative"],
+            time: "45 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Soundtrack Creation",
+            description: "Imagine a movie scene and create a 1-minute soundtrack for it using household items (e.g., tapping a spoon). Record it in 30 minutes.",
+            hashtags: ["#SoundtrackChallenge", "#Creative"],
+            time: "30 minutes",
+            type: "Creative"
+        },
+        {
+            name: "Memory Scrapbook Page",
+            description: "Make a scrapbook page about a favorite memory using paper, photos, or drawings in 1 hour. Add captions or decorations to tell the story.",
+            hashtags: ["#ScrapbookMemory", "#CreativeChallenge"],
+            time: "1 hour",
+            type: "Creative"
+        },
+
+        // Social Challenges (20)
+        {
+            name: "Smile Chain",
+            description: "Smile at 5 people you pass today (safely, from a distance) and see how many smile back. Spend 15 minutes walking around and spreading cheer.",
+            hashtags: ["#SmileChain", "#SocialChallenge"],
+            time: "15 minutes",
+            type: "Social"
+        },
+        {
+            name: "Memory Share",
+            description: "Call or message a friend and share a funny memory you have together. Spend 20 minutes chatting about it and reliving the moment.",
+            hashtags: ["#MemoryShare", "#Social"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Virtual Coffee Date",
+            description: "Set up a 30-minute video call with a friend or family member for a casual ‘coffee date.’ Sip your drink and catch up like you’re at a café.",
+            hashtags: ["#VirtualDate", "#SocialChallenge"],
+            time: "30 minutes",
+            type: "Social"
+        },
+        {
+            name: "Kind Note Drop",
+            description: "Write 3 short, kind notes (e.g., ‘You’re awesome!’) and leave them in public places (like a library book) for strangers to find in 20 minutes.",
+            hashtags: ["#KindNote", "#Social"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Group Trivia Night",
+            description: "Host a 1-hour trivia game with friends or family (in-person or online). Pick 10 fun questions and keep score for a lively social evening.",
+            hashtags: ["#TriviaNight", "#SocialChallenge"],
+            time: "1 hour",
+            type: "Social"
+        },
+        {
+            name: "Neighbor Hello",
+            description: "Say hi to a neighbor you haven’t met yet (or rarely talk to) and chat for 5-10 minutes. Keep it light and friendly to build a connection.",
+            hashtags: ["#NeighborHello", "#Social"],
+            time: "10 minutes",
+            type: "Social"
+        },
+        {
+            name: "Photo Swap",
+            description: "Text a friend and swap a photo of something you saw today (e.g., a flower, your lunch). Spend 15 minutes discussing them and catching up.",
+            hashtags: ["#PhotoSwap", "#SocialChallenge"],
+            time: "15 minutes",
+            type: "Social"
+        },
+        {
+            name: "Compliment Circle",
+            description: "Gather 3+ friends or family and take turns giving each person a unique compliment. Spend 20 minutes uplifting each other in a group chat or call.",
+            hashtags: ["#ComplimentCircle", "#Social"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Recipe Exchange",
+            description: "Share a favorite recipe with a friend and ask for one back. Spend 30 minutes discussing how to make them and planning a future cook-off.",
+            hashtags: ["#RecipeExchange", "#SocialChallenge"],
+            time: "30 minutes",
+            type: "Social"
+        },
+        {
+            name: "Group Stretch Session",
+            description: "Invite 2+ people for a 20-minute group stretch session (in-person or virtual). Lead simple stretches and chat while you loosen up together.",
+            hashtags: ["#GroupStretch", "#Social"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Thank-You Chain",
+            description: "Text or call 3 people to thank them for something specific they’ve done. Spend 15 minutes spreading gratitude and brightening their day.",
+            hashtags: ["#ThankYouChain", "#SocialChallenge"],
+            time: "15 minutes",
+            type: "Social"
+        },
+        {
+            name: "Story Round Robin",
+            description: "With 3+ friends, start a story and take turns adding a sentence (via chat or call). Spend 30 minutes building a silly or epic tale together.",
+            hashtags: ["#StoryRobin", "#Social"],
+            time: "30 minutes",
+            type: "Social"
+        },
+        {
+            name: "Pen Pal Revival",
+            description: "Write a short letter or email to someone you haven’t talked to in ages. Spend 20 minutes crafting it and send it off to reconnect.",
+            hashtags: ["#PenPal", "#SocialChallenge"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Pet Playdate",
+            description: "If you have a pet, arrange a 30-minute playdate with a friend’s pet (or just chat about them online). Share pics and enjoy some furry fun.",
+            hashtags: ["#PetPlaydate", "#Social"],
+            time: "30 minutes",
+            type: "Social"
+        },
+        {
+            name: "Dance Party Invite",
+            description: "Invite a friend for a 20-minute mini dance party (in-person or via video). Pick a playlist and groove together for a burst of social energy.",
+            hashtags: ["#DanceParty", "#SocialChallenge"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Skill Share Chat",
+            description: "Teach a friend a quick skill (e.g., folding a paper crane) over a 20-minute call or meetup. Learn something from them too for a fun exchange.",
+            hashtags: ["#SkillShare", "#Social"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Group Walk and Talk",
+            description: "Organize a 30-minute walk with 2+ friends or family. Chat about your week while enjoying fresh air and each other’s company.",
+            hashtags: ["#WalkAndTalk", "#SocialChallenge"],
+            time: "30 minutes",
+            type: "Social"
+        },
+        {
+            name: "Meme Battle",
+            description: "Challenge a friend to a 15-minute meme battle—send your funniest finds back and forth via text or chat. Laughs guaranteed!",
+            hashtags: ["#MemeBattle", "#Social"],
+            time: "15 minutes",
+            type: "Social"
+        },
+        {
+            name: "Gratitude Post",
+            description: "Post a public thank-you on social media to someone who’s helped you, then spend 20 minutes replying to comments and spreading positivity.",
+            hashtags: ["#GratitudePost", "#SocialChallenge"],
+            time: "20 minutes",
+            type: "Social"
+        },
+        {
+            name: "Random Act of Kindness",
+            description: "Do a small, safe act of kindness for someone (e.g., leave a nice note for a coworker) in 15 minutes. Share the story with a friend after.",
+            hashtags: ["#KindnessAct", "#Social"],
+            time: "15 minutes",
+            type: "Social"
+        },
+
+        // Mindfulness Challenges (20)
+        {
+            name: "Five Senses Check-In",
+            description: "Sit quietly for 10 minutes and note one thing you can see, hear, smell, taste, and touch. Focus fully on each sense to ground yourself in the moment.",
+            hashtags: ["#FiveSenses", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Candle Gaze",
+            description: "Light a candle and stare at the flame for 10 minutes, letting your thoughts drift without judgment. It’s a simple way to calm your mind.",
+            hashtags: ["#CandleGaze", "#MindfulnessChallenge"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Gratitude Walk",
+            description: "Take a 15-minute walk and silently list 10 things you’re grateful for. Focus on the details around you as you reflect.",
+            hashtags: ["#GratitudeWalk", "#Mindfulness"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Breath Counting",
+            description: "Sit comfortably and count your breaths from 1 to 20 (inhale and exhale = 1). Spend 10 minutes focusing only on the rhythm to clear your head.",
+            hashtags: ["#BreathCount", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Mindful Sip",
+            description: "Make a cup of tea or water and drink it slowly over 15 minutes. Notice the temperature, taste, and feel of each sip without distractions.",
+            hashtags: ["#MindfulSip", "#MindfulnessChallenge"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Cloud Watching",
+            description: "Lie down or sit outside for 20 minutes and watch the clouds. Let your mind relax as you observe their shapes and movements.",
+            hashtags: ["#CloudWatching", "#Mindfulness"],
+            time: "20 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Body Gratitude",
+            description: "Spend 10 minutes thanking each part of your body (e.g., feet for walking) silently or aloud. Focus on appreciation to boost self-awareness.",
+            hashtags: ["#BodyGratitude", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Sound Mapping",
+            description: "Close your eyes for 15 minutes and mentally map every sound you hear (e.g., birds, cars). Stay present without reacting to the noises.",
+            hashtags: ["#SoundMap", "#MindfulnessChallenge"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Color Hunt",
+            description: "Pick a color and spend 15 minutes finding 5 objects in that shade around you. Focus fully on each find to anchor yourself in the now.",
+            hashtags: ["#ColorHunt", "#Mindfulness"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "One-Minute Pause",
+            description: "Set a timer to pause for 1 minute every hour for 10 minutes total today. Breathe deeply and reset during each break.",
+            hashtags: ["#OneMinutePause", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Texture Touch",
+            description: "Spend 10 minutes touching 5 different textures (e.g., a blanket, a wall) and describing them in your mind. Stay focused on the sensations.",
+            hashtags: ["#TextureTouch", "#MindfulnessChallenge"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Mindful Journal",
+            description: "Write for 15 minutes about how you feel right now, without editing. Let your thoughts flow freely to process and release them.",
+            hashtags: ["#MindfulJournal", "#Mindfulness"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Leaf Meditation",
+            description: "Find a leaf and study it for 10 minutes—its veins, color, edges. Use it as a focal point to quiet your mind and stay present.",
+            hashtags: ["#LeafMeditation", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Silent Sit",
+            description: "Sit in silence for 15 minutes with no goal—just be. Notice your breath, thoughts, or surroundings without trying to change anything.",
+            hashtags: ["#SilentSit", "#MindfulnessChallenge"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Mindful Stretch",
+            description: "Do 3 slow stretches (e.g., reach up, side bend) for 15 minutes total. Sync your breath with each move and feel your body relax.",
+            hashtags: ["#MindfulStretch", "#Mindfulness"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Memory Replay",
+            description: "Pick a happy moment and replay it in your mind for 10 minutes. Focus on every detail—sights, sounds, feelings—to relive the calm.",
+            hashtags: ["#MemoryReplay", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Scent Journey",
+            description: "Smell 3 things (e.g., coffee, a flower) and spend 15 minutes focusing on each scent. Let it anchor you in the present moment.",
+            hashtags: ["#ScentJourney", "#MindfulnessChallenge"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Gratitude Rock",
+            description: "Find a small rock or object and hold it for 10 minutes while thinking of 5 things you’re thankful for. Let it be a physical reminder.",
+            hashtags: ["#GratitudeRock", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Breath Visualization",
+            description: "Close your eyes for 10 minutes and imagine your breath as a color flowing in and out. Follow it mentally to stay calm and focused.",
+            hashtags: ["#BreathVisual", "#Mindfulness"],
+            time: "10 minutes",
+            type: "Mindfulness"
+        },
+        {
+            name: "Mindful Listening",
+            description: "Play soft music or nature sounds for 15 minutes and listen intently. Focus on one instrument or sound at a time to deepen your awareness.",
+            hashtags: ["#MindfulListen", "#MindfulnessChallenge"],
+            time: "15 minutes",
+            type: "Mindfulness"
+        },
+
+        // Adventure Challenges (20)
+        {
+            name: "Backyard Explorer",
+            description: "Spend 30 minutes exploring your backyard or a nearby park like it’s a new land. Look for bugs, plants, or hidden spots and take notes or photos.",
+            hashtags: ["#BackyardAdventure", "#Explore"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Street Art Hunt",
+            description: "Walk around your area for 45 minutes to find and photograph 5 pieces of street art or murals. Appreciate the creativity in your surroundings.",
+            hashtags: ["#StreetArtHunt", "#Adventure"],
+            time: "45 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Sunset Chase",
+            description: "Find a spot with a view and spend 30 minutes watching the sunset. Arrive early to soak in the changing colors and peaceful vibes.",
+            hashtags: ["#SunsetChase", "#AdventureChallenge"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Mini Road Trip",
+            description: "Drive or walk 10-15 minutes to a nearby spot you’ve never visited (e.g., a park or shop). Spend 1 hour exploring and enjoying the change of scene.",
+            hashtags: ["#MiniRoadTrip", "#Adventure"],
+            time: "1 hour",
+            type: "Adventure"
+        },
+        {
+            name: "Nature Sound Hunt",
+            description: "Go outside for 30 minutes and record or list 5 distinct nature sounds (e.g., birds, wind). Focus on listening to discover your area’s soundtrack.",
+            hashtags: ["#NatureSounds", "#AdventureChallenge"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Pathfinder Walk",
+            description: "Take a 45-minute walk choosing only left turns (or right) at every junction. See where it leads and enjoy the unexpected route.",
+            hashtags: ["#Pathfinder", "#Adventure"],
+            time: "45 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Picnic Quest",
+            description: "Pack a small snack and find a new outdoor spot to enjoy it in 1 hour. Make it an adventure by picking a place with a view or shade.",
+            hashtags: ["#PicnicQuest", "#AdventureChallenge"],
+            time: "1 hour",
+            type: "Adventure"
+        },
+        {
+            name: "Rock Collection",
+            description: "Spend 30 minutes collecting 5 unique rocks or pebbles from a park or yard. Study their shapes and colors like a geologist on a mission.",
+            hashtags: ["#RockCollection", "#Adventure"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Birdwatching Basics",
+            description: "Sit outside for 45 minutes with a notebook and spot 3 different birds. Sketch or describe them to start your birdwatching journey.",
+            hashtags: ["#Birdwatching", "#AdventureChallenge"],
+            time: "45 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Secret Spot Search",
+            description: "Explore your area for 1 hour to find a quiet, hidden spot (e.g., a bench or tree). Sit there for a bit and enjoy your discovery.",
+            hashtags: ["#SecretSpot", "#Adventure"],
+            time: "1 hour",
+            type: "Adventure"
+        },
+        {
+            name: "Shadow Chase",
+            description: "On a sunny day, spend 30 minutes following and photographing interesting shadows. Move around to see how they shift and play.",
+            hashtags: ["#ShadowChase", "#AdventureChallenge"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Tree Hugger",
+            description: "Find 5 different trees in 45 minutes and give each a quick hug or pat. Notice their bark, leaves, and size as you connect with nature.",
+            hashtags: ["#TreeHugger", "#Adventure"],
+            time: "45 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Mapless Wander",
+            description: "Walk for 1 hour without a map or plan, letting curiosity guide you. Stay in safe areas and see what new sights you stumble upon.",
+            hashtags: ["#MaplessWander", "#AdventureChallenge"],
+            time: "1 hour",
+            type: "Adventure"
+        },
+        {
+            name: "Skyline Sketch",
+            description: "Find a high spot and spend 30 minutes sketching or photographing your town’s skyline. Capture the horizon in your own creative way.",
+            hashtags: ["#SkylineSketch", "#Adventure"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Water’s Edge Walk",
+            description: "Visit a nearby lake, river, or puddle and walk along it for 45 minutes. Listen to the water and enjoy the calming effect of being near it.",
+            hashtags: ["#WatersEdge", "#AdventureChallenge"],
+            time: "45 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Nighttime Stroll",
+            description: "Take a 30-minute walk after dark (in a safe area) with a flashlight. Notice how familiar places look different under the stars.",
+            hashtags: ["#NightStroll", "#Adventure"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Sign Scavenger Hunt",
+            description: "Spend 45 minutes finding 5 interesting signs (e.g., funny, old) in your area. Snap pics and note what makes them stand out.",
+            hashtags: ["#SignHunt", "#AdventureChallenge"],
+            time: "45 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Leaf Treasure Hunt",
+            description: "Collect 5 different types of leaves in 30 minutes from your yard or a park. Compare their shapes and colors like a nature detective.",
+            hashtags: ["#LeafHunt", "#Adventure"],
+            time: "30 minutes",
+            type: "Adventure"
+        },
+        {
+            name: "Bridge Quest",
+            description: "Find a bridge (big or small) within 1 hour and cross it. Take a moment to look down or around and enjoy the perspective shift.",
+            hashtags: ["#BridgeQuest", "#AdventureChallenge"],
+            time: "1 hour",
+            type: "Adventure"
+        },
+        {
+            name: "Color Walk",
+            description: "Pick a color and spend 45 minutes walking to find 5 things matching it (e.g., a red car, a blue sign). It’s a fun way to see your world anew.",
+            hashtags: ["#ColorWalk", "#Adventure"],
+            time: "45 minutes",
+            type: "Adventure"
+        }
+    ];
+
+
+        let currentChallenge = null;
+        let filteredChallenges = challenges;
+        const DAILY_LIMIT = 5;
+        const STORAGE_KEY = 'challengeData';
+        const STREAK_KEY = 'challengeStreak';
+
+        function getStoredData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : { count: DAILY_LIMIT, date: new Date().toDateString(), favorites: [] };
+        }
+
+        function saveStoredData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function getStreakData() {
+            const data = localStorage.getItem(STREAK_KEY);
+            return data ? JSON.parse(data) : { streak: 0, lastDate: null };
+        }
+
+        function saveStreakData(data) {
+            localStorage.setItem(STREAK_KEY, JSON.stringify(data));
+        }
+
+        function updateCounter() {
+            const storedData = getStoredData();
+            const today = new Date().toDateString();
+            if (storedData.date !== today) {
+                storedData.count = DAILY_LIMIT;
+                storedData.date = today;
+                saveStoredData(storedData);
+            }
+            challengeCounter.textContent = `Challenges Left Today: ${storedData.count}`;
+            updateStreak();
+        }
+
+        function updateStreak() {
+            const streakData = getStreakData();
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+
+            const lastDate = streakData.lastDate ? new Date(streakData.lastDate) : null;
+
+            if (!lastDate) {
+                streakData.streak = 0;
+            } else if (lastDate.toDateString() === yesterday.toDateString()) {
+                streakData.streak = streakData.streak;
+            } else if (lastDate.toDateString() !== today.toDateString()) {
+                streakData.streak = 0;
+            }
+
+            streakCounter.textContent = `Challenge Streak: ${streakData.streak} Days`;
+            saveStreakData(streakData);
+        }
+
+        function generateChallenge() {
+            const storedData = getStoredData();
+            if (storedData.count <= 0) {
+                alert("You've reached your daily limit! Reset it or try again tomorrow.");
+                return;
+            }
+
+            generateBtn.disabled = true;
+            spinner.style.display = 'block';
+            challengeCard.style.display = 'none';
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * filteredChallenges.length);
+                currentChallenge = filteredChallenges[randomIndex];
+
+                challengeName.textContent = currentChallenge.name;
+                challengeDesc.textContent = currentChallenge.description;
+                challengeHashtags.textContent = currentChallenge.hashtags.join(" ");
+                challengeTime.textContent = `Time: ${currentChallenge.time}`;
+
+                challengeCard.style.display = 'block';
+                spinner.style.display = 'none';
+                generateBtn.disabled = false;
+
+                storedData.count--;
+                storedData.date = new Date().toDateString();
+                saveStoredData(storedData);
+
+                const streakData = getStreakData();
+                streakData.streak++;
+                streakData.lastDate = new Date().toDateString();
+                saveStreakData(streakData);
+
+                updateCounter();
+
+                if (isSoundOn) {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+            }, 1000);
+        }
+
+        function shareChallenge() {
+            if (!currentChallenge) return;
+
+            const shareText = `${currentChallenge.name}\n${currentChallenge.description}\n${currentChallenge.hashtags.join(" ")}\nTime: ${currentChallenge.time}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: currentChallenge.name,
+                    text: shareText,
+                    url: window.location.href
+                }).catch(err => console.log('Error sharing:', err));
+            } else {
+                navigator.clipboard.writeText(shareText)
+                    .then(() => alert('Challenge copied to clipboard!'))
+                    .catch(err => console.log('Error copying:', err));
+            }
+        }
+
+        function addToFavorites() {
+            if (!currentChallenge) return;
+
+            const storedData = getStoredData();
+            const isAlreadyFavorite = storedData.favorites.some(fav => fav.name === currentChallenge.name);
+
+            if (!isAlreadyFavorite) {
+                storedData.favorites.push(currentChallenge);
+                saveStoredData(storedData);
+                alert(`${currentChallenge.name} added to favorites!`);
+            } else {
+                alert("This challenge is already in your favorites!");
+            }
+        }
+
+        function showFavorites() {
+            const storedData = getStoredData();
+            const favoritesList = document.getElementById('favoritesList');
+            const favoritesSection = document.getElementById('favoritesSection');
+            favoritesList.innerHTML = '';
+
+            if (storedData.favorites.length === 0) {
+                favoritesList.innerHTML = '<li>No favorites yet!</li>';
+            } else {
+                storedData.favorites.forEach(fav => {
+                    const li = document.createElement('li');
+                    li.textContent = fav.name;
+                    favoritesList.appendChild(li);
+                });
+            }
+
+            favoritesSection.style.display = favoritesSection.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function clearFavorites() {
+            const storedData = getStoredData();
+            storedData.favorites = [];
+            saveStoredData(storedData);
+            document.getElementById('favoritesList').innerHTML = '<li>No favorites yet!</li>';
+            alert('Favorites cleared!');
+        }
+
+        function resetDailyLimit() {
+            const storedData = getStoredData();
+            storedData.count = DAILY_LIMIT;
+            storedData.date = new Date().toDateString();
+            saveStoredData(storedData);
+            updateCounter();
+            alert('Daily limit reset!');
+        }
+
+        function filterChallenges(type) {
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'All') {
+                filteredChallenges = challenges;
+            } else {
+                filteredChallenges = challenges.filter(challenge => challenge.type === type);
+            }
+
+            challengeCard.style.display = 'none';
+            currentChallenge = null;
+        }
+
+        function toggleSound() {
+            isSoundOn = !isSoundOn;
+            const soundToggle = document.getElementById('soundToggle');
+            soundToggle.innerHTML = isSoundOn ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+        }
+
+        updateCounter();
+    </script>
+</body>
